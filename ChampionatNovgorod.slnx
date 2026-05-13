@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Champ.Api/Champ.Api.csproj" />
+  <Project Path="Champ.Data/Champ.Data.csproj" />
+</Solution>
