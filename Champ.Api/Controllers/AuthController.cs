@@ -1,4 +1,5 @@
 ﻿using Champ.Data;
+using Champ.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
@@ -11,6 +12,13 @@ using System.Text;
 
 namespace Champ.Api.Controllers
 {
+
+    public class PasswordRequest
+    {
+        public string Email { get; set; }
+    }
+
+
     [Route("auth")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -39,10 +47,23 @@ namespace Champ.Api.Controllers
             });
         }
 
+        [HttpPost("password")]
+        public async Task<IActionResult> ForgoutPass(PasswordRequest request)
+        {
+            return Ok(new
+            {
+                success = true,
+
+                message = "Запрос отправлен",
+
+                error_code = ""
+
+            });
+        }
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login(Data.Models.LoginRequest request)
         {
             // Ищем пользователя в БД
             var user = await db.Users
