@@ -18,12 +18,12 @@ namespace Champ.Api.Controllers
             db = context;
         }
 
-        [Authorize]
-        [HttpGet("me")]
-        public async Task<IActionResult> GetMeUser()
+
+        [HttpGet("{id}/me")]
+        public async Task<IActionResult> GetMeUser(int id)
         {
-            var userId = User.FindFirst("id").Value;
-            var us = db.Users.FirstOrDefault(x => x.UserId == Convert.ToInt32(userId));
+        
+            var us = db.Users.FirstOrDefault(x => x.UserId == id);
 
             Console.WriteLine("Логин прошел");
 
@@ -93,6 +93,57 @@ namespace Champ.Api.Controllers
                 error_code = "",
                 data = recoms
             });
+        }
+
+        public class ConfirmWeb
+        {
+            public string FromUser { get; set; }
+            public string ToUser { get; set; }
+            public string Skill { get; set; }
+            public int  Level { get; set; }
+            public string Status { get; set; }
+            public DateTime Date { get; set; }
+            public bool Incoming { get; set; }
+        }
+
+
+   
+        [HttpGet("{id}/confirmations")]
+        public async Task<IActionResult> GetConformat(int id)
+        {
+
+            var list = db.Confirmations.Include(x => x.User).Include(x => x.UserSkill).Include(x => x.ConfirmationStatus)
+            .Where(x => x.UserId == id || x.AppUserId == id).
+            OrderByDescending(x => x.DateCreate).
+            ToList();
+
+            List<ConfirmWeb> cw_list = new List<ConfirmWeb>();
+
+            foreach (var c in list)
+            {
+                cw_list.Add(new ConfirmWeb
+                {
+                    FromUser = c.User.FullName,
+                    ToUser = db.Users.FirstOrDefault(x => c.AppUserId == x.UserId).FullName,
+                    Skill = db.Skills.FirstOrDefault(x => c.UserSkill.SkillId == x.SkillId).Name,
+                    Level = c.UserSkill.Level,
+                    Status = c.ConfirmationStatus.Name,
+                    Date = c.DateCreate,
+                    Incoming = c.AppUserId == id //  я зашел по id, значит этот запрос мне (я должен подтверждать....)
+
+                });
+            }
+
+           
+
+            return Ok(new
+            {
+                success = true,
+                message = "Список подтверждений",
+                error_code = "",
+                data = cw_list
+            });
+
         }
 
 

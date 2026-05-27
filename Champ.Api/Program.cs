@@ -23,37 +23,7 @@ namespace Champ.Api
                   TrustServerCertificate=True;"));
 
 
-            // Секретный ключ для создания и проверки JWT токенов
-            string jwtKey = "12345678901234567890123456789012";
-
-            // Подключаем JWT авторизацию
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-
-                // Настройка проверки JWT токена
-                .AddJwtBearer(x =>
-                {
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        // Для простого варианта НЕ проверяем издателя токена
-                        ValidateIssuer = false,
-
-                        // Для простого варианта НЕ проверяем получателя токена
-                        ValidateAudience = false,
-
-                        // Пока НЕ проверяем срок действия
-                        ValidateLifetime = false,
-
-                        // Проверяем только подпись
-                        ValidateIssuerSigningKey = true,
-
-                        // Наш секретный ключ
-                        IssuerSigningKey =
-                            new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(jwtKey))
-                    };
-                });
-
-            builder.Services.AddAuthorization();
+         
 
             builder.Services.AddCors();
 
@@ -65,9 +35,6 @@ namespace Champ.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication();
-
-            app.UseAuthorization();
 
 
             app.MapControllers();
