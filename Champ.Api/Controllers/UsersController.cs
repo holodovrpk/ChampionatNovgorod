@@ -54,46 +54,7 @@ namespace Champ.Api.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet("history")]
-        public async Task<IActionResult> GetHistory(int days = 30)
-        {
-            int userId = Convert.ToInt32(User.FindFirst("id").Value);
-
-            DateTime dateFrom = DateTime.Now.AddDays(-days);
-
-            var history = await db.RatingHistories
-                .Where(x => x.UserId == userId && x.DateEdit >= dateFrom)
-                .OrderBy(x => x.DateEdit).ToListAsync();
-
-            return Ok(new
-            {
-                success = true,
-                message = "История рейтинга получена",
-                error_code = "",
-                data = history
-            });
-        }
-
-
-        [Authorize]
-        [HttpGet("recomendations")]
-        public async Task<IActionResult> GetRecomendationsy()
-        {
-            int userId = Convert.ToInt32(User.FindFirst("id").Value);
-
-
-            var recoms = await db.Recomendations
-                .Where(x => x.UserId == userId).ToListAsync();
-
-            return Ok(new
-            {
-                success = true,
-                message = "История рейтинга получена",
-                error_code = "",
-                data = recoms
-            });
-        }
+     
 
         public class ConfirmWeb
         {
